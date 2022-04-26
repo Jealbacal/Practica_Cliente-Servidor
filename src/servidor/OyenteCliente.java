@@ -1,15 +1,21 @@
 package servidor;
 
+import mensajes.Mensaje;
+import usuarios.Usuario;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
+import java.util.Map;
 
 public class OyenteCliente extends Thread{
     private Mensaje mensaje;
     private Socket s;
+    private Map<Integer, Usuario> tablaUsuario;
 
-    public OyenteCliente(Socket s){
+    public OyenteCliente(Socket s, Map<Integer, Usuario> tablaUsuario){
         this.s=s;
+        this.tablaUsuario=tablaUsuario;
 
     }
     @Override
@@ -24,6 +30,7 @@ public class OyenteCliente extends Thread{
 
                         case 1:
                             //mensaje de confirmacion
+
                             break;
 
                         case 2:
