@@ -13,7 +13,7 @@ public class Servidor {
         while(true) {
             ServerSocket serverSockect = new ServerSocket(socket);
             Socket s = serverSockect.accept();
-            (new OyenteClient(s)).start();
+            (new OyenteCliente(s)).start();
         }
     }
 }
