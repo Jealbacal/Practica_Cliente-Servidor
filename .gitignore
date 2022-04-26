@@ -32,4 +32,4 @@ nbdist/
 .nb-gradle/
 target/
 
-Practica_Cliente-Servidor/.idea/
+/Practica_Cliente-Servidor/.idea/
