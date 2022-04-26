@@ -15,9 +15,9 @@ public class Servidor {
 
     public static void main(String args[]) throws IOException {
 
-        while(true) {
-            ServerSocket serverSockect = new ServerSocket(socket);
-            Socket s = serverSockect.accept();
+        while (true) {
+            ServerSocket ss = new ServerSocket(socket);
+            Socket s = ss.accept();
             (new OyenteCliente(s,tablaUsuario)).start();
         }
     }
