@@ -1,10 +1,13 @@
 package servidor;
 
 import mensajes.Mensaje;
+import mensajes.MensajeConfirmacionConexion;
 import usuarios.Usuario;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Map;
 
@@ -30,11 +33,14 @@ public class OyenteCliente extends Thread{
 
                         case 1:
                             //mensaje de confirmacion
-
+                            ObjectOutputStream fout = new ObjectOutputStream(s.getOutputStream());
+                            fout.writeObject(new MensajeConfirmacionConexion("Servidor","id..tal"));
+                            fout.flush();
                             break;
 
                         case 2:
                             //mensaje de confirmacion.lista de usuario
+
                             break;
 
                         case 3:
