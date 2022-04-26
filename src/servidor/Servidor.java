@@ -10,8 +10,10 @@ public class Servidor {
 
     public static void main(String args[]) throws IOException {
 
-        ServerSocket serverSockect=new ServerSocket(socket);
-        Socket s =  serverSockect.accept();
-
+        while(true) {
+            ServerSocket serverSockect = new ServerSocket(socket);
+            Socket s = serverSockect.accept();
+            (new OyenteClient(s)).start();
+        }
     }
 }
