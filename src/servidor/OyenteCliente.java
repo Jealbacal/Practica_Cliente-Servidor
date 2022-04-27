@@ -1,6 +1,7 @@
 package servidor;
 
 import mensajes.Mensaje;
+import mensajes.MensajeConexion;
 import mensajes.MensajeConfirmacionConexion;
 import usuarios.Usuario;
 
@@ -34,6 +35,8 @@ public class OyenteCliente extends Thread{
                         case 1:
                             //mensaje de confirmacion
                             ObjectOutputStream fout = new ObjectOutputStream(s.getOutputStream());
+                            MensajeConexion msgConex = (MensajeConexion) mensaje;
+
                             fout.writeObject(new MensajeConfirmacionConexion("Servidor","id..tal"));
                             fout.flush();
                             break;

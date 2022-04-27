@@ -1,9 +1,17 @@
 package mensajes;
 
-public class MensajeConexion extends Mensaje {
+import usuarios.Usuario;
 
-	public MensajeConexion(String origen, String destino) {
+public class MensajeConexion extends Mensaje {
+	private Usuario usuario;
+
+	public MensajeConexion(String origen, String destino,Usuario usuario) {
 		super(MSG_CONEX, origen, destino);
+		this.usuario=usuario;
+	}
+
+	public Usuario getUsuario() {
+		return usuario;
 	}
 
 	@Override
