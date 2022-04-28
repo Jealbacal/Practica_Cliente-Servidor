@@ -15,10 +15,14 @@ public class Servidor {
 
     public static void main(String args[]) throws IOException {
 
+    	ServerSocket ss = new ServerSocket(socket);
+    	
         while (true) {
-            ServerSocket ss = new ServerSocket(socket);
+        	System.out.println("Esperando nueva conexion al servidor");
             Socket s = ss.accept();
             (new OyenteCliente(s,tablaUsuario)).start();
+            System.out.println("Nueva conexion realizada con cliente " + s.toString());
         }
+        
     }
 }
