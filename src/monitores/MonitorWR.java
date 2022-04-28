@@ -25,7 +25,7 @@ public class MonitorWR {
         L.unlock();
     }
 
-    public void  releaseRead(){
+    public void releaseRead(){
 
         L.lock();
 

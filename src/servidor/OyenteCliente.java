@@ -1,76 +1,112 @@
 package servidor;
 
-import mensajes.Mensaje;
-import mensajes.MensajeConexion;
-import mensajes.MensajeConfirmacionConexion;
+import mensajes.*;
 import usuarios.Usuario;
+import monitores.MonitorWR;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.Iterator;
 import java.util.Map;
 
 public class OyenteCliente extends Thread{
-    private Mensaje mensaje;
-    private Socket s;
-    private Map<Integer, Usuario> tablaUsuario;
+	private Socket s;
+	private Map<String, Usuario> tablaUsuarios;
+	private MonitorWR monitor;
 
-    public OyenteCliente(Socket s, Map<Integer, Usuario> tablaUsuario){
-        this.s=s;
-        this.tablaUsuario=tablaUsuario;
+	public OyenteCliente(Socket s, Map<String, Usuario> tablaUsuarios, MonitorWR monitor){
+		this.s = s;
+		this.tablaUsuarios = tablaUsuarios;
+		this.monitor = monitor;
+	}
 
-    }
-    @Override
-    public void run() {
-            while(true){
-                //todo
-                try {
-                    ObjectInputStream fin= new ObjectInputStream(s.getInputStream());
-                    mensaje = (Mensaje) fin.readObject();
+	@Override
+	public void run() {
+		try {
+			ObjectInputStream fin = new ObjectInputStream(s.getInputStream());
+			ObjectOutputStream fout = new ObjectOutputStream(s.getOutputStream());
 
-                    switch (mensaje.getTipo()){
+			while(true){
+				Mensaje mensaje = (Mensaje) fin.readObject();
 
-                        case 1:
-                            //mensaje de confirmacion
-                            ObjectOutputStream fout = new ObjectOutputStream(s.getOutputStream());
-                            MensajeConexion msgConex = (MensajeConexion) mensaje;
+				switch (mensaje.getTipo()) {
 
-                            fout.writeObject(new MensajeConfirmacionConexion("Servidor","id..tal"));
-                            fout.flush();
-                            break;
+				case Mensaje.MSG_CONEX: //mensaje de conexion
+					MensajeConexion msgConex = (MensajeConexion) mensaje;
+					
+					Usuario usr = msgConex.getUsuario();
+					
+					monitor.requestWrite();
+					tablaUsuarios.put(usr.getId(), usr);
+					monitor.releaseWrite();
 
-                        case 2:
-                            //mensaje de confirmacion.lista de usuario
+					fout.writeObject(new MensajeConfirmacionConexion("Servidor", usr.getId(), usr.toString()));
+					fout.flush();
 
-                            break;
+					break;
 
-                        case 3:
-                            //mensaje de emitir fichero
-                            break;
+				case Mensaje.MSG_LISTA: //mensaje de lista de usuarios
+					MensajeListaUsuarios msgLista = (MensajeListaUsuarios) mensaje;
+					
+					monitor.requestRead();
+					String lista = tablaUsuarios.toString();
+					monitor.releaseRead();
+					
+					fout.writeObject(new MensajeConfirmacionListaUsuarios("Servidor", msgLista.getOrigen(), lista));
+					fout.flush();
 
-                        case 4:
-                            //mensaje de preparado S->C
-                            break;
+					break;
 
-                        case 5:
-                            //mensaje de confirmacion cerrar conex
-                            break;
+				case Mensaje.MSG_FICH: //mensaje de emitir fichero
+					MensajePedirFichero msgFich = (MensajePedirFichero) mensaje;
+					
+					monitor.requestRead();
+					Iterator<String> it = tablaUsuarios.keySet().iterator();
+					
+					Usuario usr2 = null;
+					Boolean stop = false;
+					while (it.hasNext() && !stop) {
+						String u = (String) it.next();
+						
+						if (u != msgFich.getOrigen()) {
+							if (tablaUsuarios.get(u).getLista().contains(msgFich.getFichero())) {
+								usr2 = tablaUsuarios.get(u);
+								stop = true;
+							}
+						}
+					}
+					monitor.releaseRead();
+					
+					if (usr2 != null) {
+						ObjectOutputStream fout2 = new ObjectOutputStream((usr2.getSocket()).getOutputStream());
+						fout2.writeObject(new MensajePedirFichero("Servidor", usr2.getId(), msgFich.getFichero()));
+						fout2.flush();
+					}
+					
+					break;
 
-                        case 6:
-                            //mensaje de confirmacion
-                            break;
+				case 9:
+					//mensaje de preparado S->C
+					break;
+
+				case 10:
+					//mensaje de confirmacion cerrar conex
+					break;
+
+				case 11:
+					//mensaje de confirmacion
+					break;
 
 
 
-                    }
+				}
 
-                } catch (IOException | ClassNotFoundException e) {
-                    e.printStackTrace();
-                }
-            }
-    }
+
+			}
+		} catch (IOException | ClassNotFoundException | InterruptedException e) { e.printStackTrace(); }
+	}
 
 
 }

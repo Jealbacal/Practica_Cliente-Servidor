@@ -1,6 +1,7 @@
 package servidor;
 
 import usuarios.Usuario;
+import monitores.MonitorWR;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -11,16 +12,18 @@ import java.util.Map;
 public class Servidor {
 
     private static final int socket=999;
-    private static Map<Integer, Usuario> tablaUsuario = new HashMap<Integer,Usuario>();
+    private static Map<String, Usuario> tablaUsuario = new HashMap<String, Usuario>();
+    private static MonitorWR monitor;
 
     public static void main(String args[]) throws IOException {
 
     	ServerSocket ss = new ServerSocket(socket);
+    	monitor = new MonitorWR();
     	
         while (true) {
         	System.out.println("Esperando nueva conexion al servidor");
             Socket s = ss.accept();
-            (new OyenteCliente(s,tablaUsuario)).start();
+            (new OyenteCliente(s, tablaUsuario, monitor)).start();
             System.out.println("Nueva conexion realizada con cliente " + s.toString());
         }
         

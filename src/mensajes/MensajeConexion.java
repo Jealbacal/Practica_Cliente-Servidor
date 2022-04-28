@@ -5,14 +5,12 @@ import usuarios.Usuario;
 public class MensajeConexion extends Mensaje {
 	private Usuario usuario;
 
-	public MensajeConexion(String origen, String destino,Usuario usuario) {
+	public MensajeConexion(String origen, String destino, Usuario usuario) {
 		super(MSG_CONEX, origen, destino);
-		this.usuario=usuario;
+		this.usuario = usuario;
 	}
 
-	public Usuario getUsuario() {
-		return usuario;
-	}
+	public Usuario getUsuario() { return usuario; }
 
 	@Override
 	public void mostrarInfo() {

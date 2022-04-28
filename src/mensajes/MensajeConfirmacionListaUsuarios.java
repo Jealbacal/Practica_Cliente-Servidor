@@ -1,10 +1,14 @@
 package mensajes;
 
 public class MensajeConfirmacionListaUsuarios extends Mensaje {
-
-	public MensajeConfirmacionListaUsuarios(String origen, String destino) {
+	private String lista;
+	
+	public MensajeConfirmacionListaUsuarios(String origen, String destino, String lista) {
 		super(MSG_CONF_LISTA, origen, destino);
+		this.lista = lista;
 	}
+	
+	public String getLista() { return lista; }
 
 	@Override
 	public void mostrarInfo() {
