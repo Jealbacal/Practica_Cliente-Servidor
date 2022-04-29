@@ -10,8 +10,12 @@ public class Usuario {
 	private final String dirIP;
 	private final String rutaInfo;
 	private ArrayList<String> listaFich;
-	private final Socket s;
-	
+	private  Socket s;
+
+	public void setS(Socket s) {
+		this.s = s;
+	}
+
 	public Usuario(String ID, String dirIP, String rutaInfo, Socket s) {
 		this.ID = ID;
 		this.dirIP = dirIP;
@@ -22,6 +26,18 @@ public class Usuario {
 		}
 		
 		this.s = s;
+	}
+
+	public Usuario(String ID, String dirIP, String rutaInfo) {
+		this.ID = ID;
+		this.dirIP = dirIP;
+		this.rutaInfo = rutaInfo;
+
+		for (File entry : (new File(rutaInfo)).listFiles()) {
+			listaFich.add(entry.getName());
+		}
+
+
 	}
 	
 	public void addFileToList(String fileName) { listaFich.add(fileName); }
