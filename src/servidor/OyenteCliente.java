@@ -87,8 +87,16 @@ public class OyenteCliente extends Thread{
 					
 					break;
 
-				case 9:
+					case Mensaje.MSG_OK_SER_CLI:
 					//mensaje de preparado S->C
+						MensajePreparadoClienteServidor msgCS=(MensajePreparadoClienteServidor) mensaje;
+
+						fout.writeObject(new MensajePreparadoServidorCliente("Servidor","Cliente",msgCS.getUsuarioID(),msgCS.getPuerto(),msgCS.getIP()));
+						fout.flush();
+
+
+
+
 					break;
 
 				case 10:

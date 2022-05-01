@@ -2,7 +2,7 @@ package mensajes;
 
 public class MensajePreparadoServidorCliente extends Mensaje {
 
-	public MensajePreparadoServidorCliente(String origen, String destino) {
+	public MensajePreparadoServidorCliente(String servidor, String cliente, String origen, int puerto, String destino) {
 		super(MSG_OK_SER_CLI, origen, destino);
 	}
 

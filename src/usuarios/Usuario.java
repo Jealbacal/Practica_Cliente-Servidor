@@ -1,6 +1,7 @@
 package usuarios;
 
 import java.io.File;
+import java.io.Serializable;
 import java.net.Socket;
 import java.util.ArrayList;
 
@@ -32,7 +33,7 @@ public class Usuario {
 		this.ID = ID;
 		this.dirIP = dirIP;
 		this.rutaInfo = rutaInfo;
-
+		listaFich=new ArrayList<String>();
 		for (File entry : (new File(rutaInfo)).listFiles()) {
 			listaFich.add(entry.getName());
 		}

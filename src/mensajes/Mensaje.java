@@ -1,6 +1,8 @@
 package mensajes;
 
-public abstract class Mensaje {
+import java.io.Serializable;
+
+public abstract class Mensaje implements Serializable {
 	public static final int MSG_CONEX = 0;
 	public static final int MSG_CONF_CONEX = 1;
 	public static final int MSG_LISTA = 2;

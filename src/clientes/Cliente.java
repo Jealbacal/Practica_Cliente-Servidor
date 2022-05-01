@@ -1,7 +1,7 @@
 package clientes;
 
-import mensajes.MensajeConexion;
-import mensajes.MensajeConfirmacionConexion;
+import mensajes.*;
+import servidor.Servidor;
 import usuarios.Usuario;
 
 import java.io.BufferedReader;
@@ -21,15 +21,37 @@ public class Cliente {
         usuario.setS(s);
 
         ObjectOutputStream fout = new ObjectOutputStream(s.getOutputStream());
-        fout.writeObject(new MensajeConexion("Servidor","Cliente" ,usuario));
+        MensajeConexion msg= new MensajeConexion("Cliente","Servidor" ,usuario);
+        //error msg no lo detecta como un objeto serializable
+        fout.writeObject(msg);
         fout.flush();
         new OyenteServidor(s).start();
-        int op;
-        op=menu();
-        while (op !=3) {
+        int op= 0;
 
+        while (op !=3) {
+            op=menu();
             //segun el menu manda mensajes al servidor
+
+            switch (op) {
+                case 1 -> {
+                    fout.writeObject(new MensajeListaUsuarios("Cliente", "Servidor"));
+                    fout.flush();
+                }
+                case 2 -> {
+                    System.out.println("¿Cual es el nombre del libro?");
+                    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+                    String fichero = br.readLine();
+                    fout.writeObject(new MensajePedirFichero("Cliente", "Servidor", fichero));
+                    fout.flush();
+                }
+                case 3 -> {
+                    fout.writeObject(new MensajeCerrarConexion("Cliente", "Servidor"));
+                    fout.flush();
+                }
+            }
+
         }
+        //Creo que aca hay que cerrar el sockect
 
 
     }
@@ -53,6 +75,7 @@ public class Cliente {
                 op=1;
             }
             else if (Integer.parseInt(br.readLine())==2){
+
                 op=2;
             }
             else if (Integer.parseInt(br.readLine())==3){
@@ -67,7 +90,7 @@ public class Cliente {
         BufferedReader clientID = new BufferedReader(new InputStreamReader(System.in));
 
 
-        System.out.println("¿Cual es tu nombre");
+        System.out.println("¿Cual es tu nombre?");
         String nombre= clientID.readLine();
 
         System.out.println("¿Donde tienes guardados tus Ficheros");

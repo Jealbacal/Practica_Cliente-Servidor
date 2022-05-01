@@ -2,6 +2,7 @@ package mensajes;
 
 import usuarios.Usuario;
 
+
 public class MensajeConexion extends Mensaje {
 	private Usuario usuario;
 
