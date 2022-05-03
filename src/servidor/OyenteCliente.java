@@ -12,9 +12,9 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class OyenteCliente extends Thread{
-	private Socket s;
-	private Map<String, Usuario> tablaUsuarios;
-	private MonitorWR monitor;
+	private final Socket s;
+	private final Map<String, Usuario> tablaUsuarios;
+	private final MonitorWR monitor;
 
 	public OyenteCliente(Socket s, Map<String, Usuario> tablaUsuarios, MonitorWR monitor){
 		this.s = s;
@@ -28,7 +28,9 @@ public class OyenteCliente extends Thread{
 			ObjectInputStream fin = new ObjectInputStream(s.getInputStream());
 			ObjectOutputStream fout = new ObjectOutputStream(s.getOutputStream());
 
-			while(true){
+			boolean repeat = true;
+
+			while(repeat){
 				Mensaje mensaje = (Mensaje) fin.readObject();
 
 				switch (mensaje.getTipo()) {
@@ -68,7 +70,7 @@ public class OyenteCliente extends Thread{
 					Usuario usr2 = null;
 					Boolean stop = false;
 					while (it.hasNext() && !stop) {
-						String u = (String) it.next();
+						String u = it.next();
 						
 						if (u != msgFich.getOrigen()) {
 							if (tablaUsuarios.get(u).getLista().contains(msgFich.getFichero())) {
@@ -87,27 +89,31 @@ public class OyenteCliente extends Thread{
 					
 					break;
 
-					case Mensaje.MSG_OK_SER_CLI:
+					case Mensaje.MSG_OK_CLI_SER:
 					//mensaje de preparado S->C
-						MensajePreparadoClienteServidor msgCS=(MensajePreparadoClienteServidor) mensaje;
+						MensajePreparadoClienteServidor msgCS = (MensajePreparadoClienteServidor) mensaje;
 
-						fout.writeObject(new MensajePreparadoServidorCliente("Servidor","Cliente",msgCS.getUsuarioID(),msgCS.getPuerto(),msgCS.getIP()));
+						fout.writeObject(new MensajePreparadoServidorCliente("Servidor",msgCS.getOrigen(), msgCS.getEmisor(), msgCS.getPuerto(), msgCS.getIPEmisor()));
 						fout.flush();
 
+					break;
 
+					case Mensaje.MSG_CERRAR:
+						//mensaje de cerrar conex
+						MensajeCerrarConexion msgCC=(MensajeCerrarConexion) mensaje;
 
+						monitor.requestWrite();
+						tablaUsuarios.remove(msgCC.getOrigen());
+						monitor.releaseWrite();
+
+						repeat = false;
+
+						fout.writeObject(new MensajeConfirmacionCerrarConexion("Servidor",msgCC.getOrigen()));
+						fout.flush();
 
 					break;
 
-				case 10:
-					//mensaje de confirmacion cerrar conex
-					break;
-
-				case 11:
-					//mensaje de confirmacion
-					break;
-
-
+					default: break;
 
 				}
 

@@ -1,23 +1,21 @@
 package clientes;
 
-import mensajes.Mensaje;
-import mensajes.MensajeConexion;
-import mensajes.MensajeConfirmacionConexion;
+import mensajes.*;
+import usuarios.Usuario;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.ServerSocket;
 import java.net.Socket;
 
 public class OyenteServidor extends Thread{
-    private Mensaje mensaje;
-    private Socket s;
+    private final Socket s;
+    private final Usuario usuario;
 
-
-    public OyenteServidor(Socket s){
-        this.s=s;
-
-
+    public OyenteServidor(Socket s, Usuario usuario){
+        this.s = s;
+        this.usuario = usuario;
     }
 
     @Override
@@ -25,29 +23,43 @@ public class OyenteServidor extends Thread{
 
          try {
             ObjectInputStream fin = new ObjectInputStream(s.getInputStream());
+            ObjectOutputStream fout = new ObjectOutputStream(s.getOutputStream());
 
-            while (true) {
-                //todo
-
-
-                mensaje = (Mensaje) fin.readObject();
+             while (true) {
+                Mensaje mensaje = (Mensaje) fin.readObject();
 
                 switch (mensaje.getTipo()) {
 
-                    case 1:
+                    case Mensaje.MSG_CONF_CONEX:
                         //mensaje de confirmacion de conexion
+                        MensajeConfirmacionConexion msgConfConex = (MensajeConfirmacionConexion) mensaje;
 
+                        System.out.println(msgConfConex.getMsg());
 
-                    case 2:
+                        break;
+
+                    case Mensaje.MSG_CONF_LISTA:
                         //mensaje de confirmacion.lista de usuario
+                        MensajeConfirmacionListaUsuarios msgCLU = (MensajeConfirmacionListaUsuarios) mensaje;
+
+                        System.out.println(msgCLU.getLista());
 
                         break;
 
-                    case 3:
+                    case Mensaje.MSG_FICH:
                         //mensaje de emitir fichero
+                        MensajePedirFichero msgFich = (MensajePedirFichero) mensaje;
+
+                        int port = 400;
+
+                        ServerSocket ss = new ServerSocket(port);
+
+                        fout.writeObject(new MensajePreparadoClienteServidor(usuario.getId(), "Servidor", usuario.getId(), port, usuario.getDireccionIP()));
+                        fout.flush();
+
                         break;
 
-                    case 4:
+                    case 12:
                         //mensaje de preparado S->C
                         break;
 
