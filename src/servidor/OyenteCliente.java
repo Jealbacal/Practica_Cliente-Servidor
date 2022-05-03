@@ -93,7 +93,7 @@ public class OyenteCliente extends Thread{
 					//mensaje de preparado S->C
 						MensajePreparadoClienteServidor msgCS = (MensajePreparadoClienteServidor) mensaje;
 
-						fout.writeObject(new MensajePreparadoServidorCliente("Servidor",msgCS.getOrigen(), msgCS.getEmisor(), msgCS.getPuerto(), msgCS.getIPEmisor()));
+						fout.writeObject(new MensajePreparadoServidorCliente("Servidor", "Receptor", msgCS.getEmisor(), msgCS.getPuerto(), msgCS.getIPEmisor()));
 						fout.flush();
 
 					break;

@@ -3,11 +3,11 @@ package clientes;
 import mensajes.*;
 import usuarios.Usuario;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class OyenteServidor extends Thread{
     private final Socket s;
@@ -25,7 +25,9 @@ public class OyenteServidor extends Thread{
             ObjectInputStream fin = new ObjectInputStream(s.getInputStream());
             ObjectOutputStream fout = new ObjectOutputStream(s.getOutputStream());
 
-             while (true) {
+            boolean repeat = true;
+
+             while (repeat) {
                 Mensaje mensaje = (Mensaje) fin.readObject();
 
                 switch (mensaje.getTipo()) {
@@ -57,19 +59,41 @@ public class OyenteServidor extends Thread{
                         fout.writeObject(new MensajePreparadoClienteServidor(usuario.getId(), "Servidor", usuario.getId(), port, usuario.getDireccionIP()));
                         fout.flush();
 
+                        Socket sendSocket = ss.accept();
+                        String sourceFileName = usuario.getRuta() + File.separator + msgFich.getFichero();
+                        (new ObjectOutputStream(sendSocket.getOutputStream())).writeObject(new File(sourceFileName));
+
+                        ss.close();
+                        sendSocket.close();
+
                         break;
 
-                    case 12:
+                    case Mensaje.MSG_OK_SER_CLI:
                         //mensaje de preparado S->C
+                        MensajePreparadoServidorCliente msgPSC = (MensajePreparadoServidorCliente) mensaje;
+
+                        Socket fileSocket = new Socket(msgPSC.getIPEmisor(), msgPSC.getPuerto());
+
+                        File source = (File) (new ObjectInputStream(fileSocket.getInputStream())).readObject();
+                        String destFileName = usuario.getRuta() + File.separator + source.getName();
+                        File dest = new File(destFileName);
+                        Files.copy(source.toPath(), dest.toPath());
+
+                        fileSocket.close();
+
                         break;
 
-                    case 5:
+                    case Mensaje.MSG_CONF_CERRAR:
                         //mensaje de confirmacion cerrar conex
+                        MensajeConfirmacionCerrarConexion msgCCC = (MensajeConfirmacionCerrarConexion) mensaje;
+
+                        msgCCC.mostrarInfo();
+
+                        repeat = false;
+
                         break;
 
-                    case 6:
-                        //mensaje de confirmacion
-                        break;
+                    default: break;
 
 
                 }
