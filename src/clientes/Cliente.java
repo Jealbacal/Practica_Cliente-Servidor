@@ -22,10 +22,9 @@ public class Cliente {
 
         ObjectOutputStream fout = new ObjectOutputStream(s.getOutputStream());
         MensajeConexion msg= new MensajeConexion("Cliente","Servidor" ,usuario);
-        //error msg no lo detecta como un objeto serializable
         fout.writeObject(msg);
         fout.flush();
-        new OyenteServidor(s).start();
+        new OyenteServidor(s,usuario).start();
         int op= 0;
 
         while (op !=3) {
@@ -34,8 +33,11 @@ public class Cliente {
 
             switch (op) {
                 case 1 -> {
-                    fout.writeObject(new MensajeListaUsuarios("Cliente", "Servidor"));
+
+                    MensajeListaUsuarios mlu =new MensajeListaUsuarios("Cliente", "Servidor");
+                    fout.writeObject(mlu);
                     fout.flush();
+                    break;
                 }
                 case 2 -> {
                     System.out.println("¿Cual es el nombre del libro?");
@@ -43,10 +45,15 @@ public class Cliente {
                     String fichero = br.readLine();
                     fout.writeObject(new MensajePedirFichero("Cliente", "Servidor", fichero));
                     fout.flush();
+                    break;
                 }
                 case 3 -> {
                     fout.writeObject(new MensajeCerrarConexion("Cliente", "Servidor"));
                     fout.flush();
+                    break;
+                }
+                 default ->{
+                    break;
                 }
             }
 
@@ -67,7 +74,7 @@ public class Cliente {
 
             System.out.println( "1- Consulta lista de usuarios");
             System.out.println( "2- Pedir fichero");
-            System.out.println( "3-Salir");
+            System.out.println( "3- Salir");
 
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 

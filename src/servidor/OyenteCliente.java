@@ -16,6 +16,7 @@ public class OyenteCliente extends Thread{
 	private final Map<String, Usuario> tablaUsuarios;
 	private final MonitorWR monitor;
 
+
 	public OyenteCliente(Socket s, Map<String, Usuario> tablaUsuarios, MonitorWR monitor){
 		this.s = s;
 		this.tablaUsuarios = tablaUsuarios;
@@ -25,13 +26,16 @@ public class OyenteCliente extends Thread{
 	@Override
 	public void run() {
 		try {
+
 			ObjectInputStream fin = new ObjectInputStream(s.getInputStream());
 			ObjectOutputStream fout = new ObjectOutputStream(s.getOutputStream());
 
 			boolean repeat = true;
 
 			while(repeat){
+
 				Mensaje mensaje = (Mensaje) fin.readObject();
+
 
 				switch (mensaje.getTipo()) {
 
@@ -82,6 +86,8 @@ public class OyenteCliente extends Thread{
 					monitor.releaseRead();
 					
 					if (usr2 != null) {
+						//DA FALLO HAY QUE RESTRUCTURAR COSAS
+
 						ObjectOutputStream fout2 = new ObjectOutputStream((usr2.getSocket()).getOutputStream());
 						fout2.writeObject(new MensajePedirFichero("Servidor", usr2.getId(), msgFich.getFichero()));
 						fout2.flush();
@@ -116,8 +122,6 @@ public class OyenteCliente extends Thread{
 					default: break;
 
 				}
-
-
 			}
 		} catch (IOException | ClassNotFoundException | InterruptedException e) { e.printStackTrace(); }
 	}
