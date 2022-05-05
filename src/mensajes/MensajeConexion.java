@@ -4,7 +4,7 @@ import usuarios.Usuario;
 
 
 public class MensajeConexion extends Mensaje {
-	private Usuario usuario;
+	private final Usuario usuario;
 
 	public MensajeConexion(String origen, String destino, Usuario usuario) {
 		super(MSG_CONEX, origen, destino);
@@ -15,7 +15,8 @@ public class MensajeConexion extends Mensaje {
 
 	@Override
 	public void mostrarInfo() {
-		System.out.println("El cliente " + getOrigen() + " pide conexion a " + getDestino());
+		System.out.println("El cliente " + getOrigen() + " quiere conectarse a " + getDestino());
+		System.out.println("Usuario a conectar: " + usuario.toString());
 	}
 
 }

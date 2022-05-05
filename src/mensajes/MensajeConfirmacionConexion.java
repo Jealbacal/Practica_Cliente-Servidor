@@ -1,7 +1,7 @@
 package mensajes;
 
 public class MensajeConfirmacionConexion extends Mensaje {
-	private String msgConfirm;
+	private final String msgConfirm;
 
 	public MensajeConfirmacionConexion(String origen, String destino, String msgConfirm) {
 		super(MSG_CONF_CONEX, origen, destino);
@@ -12,6 +12,7 @@ public class MensajeConfirmacionConexion extends Mensaje {
 
 	@Override
 	public void mostrarInfo() {
-		System.out.println("El servidor " + getOrigen() + " confirma conexion a " + getDestino());		
+		System.out.println("Conexion realizada correctamente entre " + getOrigen() + " y " + getDestino());
+		System.out.println(msgConfirm);
 	}
 }

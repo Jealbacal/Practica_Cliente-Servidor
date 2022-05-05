@@ -21,6 +21,7 @@ public class MensajePreparadoServidorCliente extends Mensaje {
 
 	@Override
 	public void mostrarInfo() {
-		System.out.println("Servidor " + getOrigen() + " preparado con " + getDestino());
+		System.out.println(getOrigen() + " informa a " + getDestino() + " de que puede conectarse con:");
+		System.out.println("Emisor: " + emisor + ". IP: " + IPEmisor + ". Puerto: " + puerto);
 	}
 }

@@ -22,7 +22,6 @@ public abstract class Mensaje implements Serializable {
 		this.destino = destino;
 	}
 	
-	// TODO
 	public abstract void mostrarInfo();
 	
 	public int getTipo() { return tipo; }

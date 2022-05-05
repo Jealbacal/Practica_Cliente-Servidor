@@ -8,6 +8,6 @@ public class MensajeCerrarConexion extends Mensaje {
 
 	@Override
 	public void mostrarInfo() {
-		System.out.println("El cliente " + getOrigen() + " pide cerrar conexion con " + getDestino());
+		System.out.println("Usuario " + getOrigen() + " quiere cerrar conexion con " + getDestino());
 	}
 }

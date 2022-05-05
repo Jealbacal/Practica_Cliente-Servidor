@@ -12,6 +12,6 @@ public class MensajePedirFichero extends Mensaje {
 
 	@Override
 	public void mostrarInfo() {
-		System.out.println("El cliente " + getOrigen() + " pide fichero a " + getDestino());
+		System.out.println("El usuario " + getOrigen() + " pide el fichero " + fichero + " a " + getDestino());
 	}
 }

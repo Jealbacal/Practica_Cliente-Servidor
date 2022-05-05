@@ -8,6 +8,6 @@ public class MensajeConfirmacionCerrarConexion extends Mensaje {
 
 	@Override
 	public void mostrarInfo() {
-		System.out.println("El servidor " + getOrigen() + " confirma cerrar conexion a " + getDestino());
+		System.out.println("Conexion cerrada correctamente entre " + getOrigen() + " y " + getDestino());
 	}
 }

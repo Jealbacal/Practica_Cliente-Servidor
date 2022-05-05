@@ -8,7 +8,7 @@ public class MensajeListaUsuarios extends Mensaje {
 
 	@Override
 	public void mostrarInfo() {
-		System.out.println("El cliente " + getOrigen() + " pide la lista de usuarios a " + getDestino());
+		System.out.println("El usuario " + getOrigen() + " pide la lista de usuarios a " + getDestino());
 	}
 
 }
