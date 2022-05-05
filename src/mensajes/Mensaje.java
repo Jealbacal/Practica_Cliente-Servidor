@@ -2,6 +2,7 @@ package mensajes;
 
 import java.io.Serializable;
 
+@SuppressWarnings("serial")
 public abstract class Mensaje implements Serializable {
 	public static final int MSG_CONEX = 0;
 	public static final int MSG_CONF_CONEX = 1;

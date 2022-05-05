@@ -1,7 +1,6 @@
 package clientes;
 
 import mensajes.*;
-import servidor.Servidor;
 import usuarios.Usuario;
 
 import java.io.BufferedReader;
@@ -24,7 +23,9 @@ public class Cliente {
         MensajeConexion msg= new MensajeConexion("Cliente","Servidor" ,usuario);
         fout.writeObject(msg);
         fout.flush();
-        new OyenteServidor(s,usuario,fout).start();
+
+        (new OyenteServidor(s,usuario,fout)).start();
+
         int op= 0;
 
         while (op !=3) {

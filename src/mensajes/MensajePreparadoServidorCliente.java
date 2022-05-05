@@ -1,5 +1,6 @@
 package mensajes;
 
+@SuppressWarnings("serial")
 public class MensajePreparadoServidorCliente extends Mensaje {
 
 	private final String emisor;
