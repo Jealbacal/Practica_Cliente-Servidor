@@ -43,6 +43,7 @@ public class OyenteCliente extends Thread implements Serializable {
 
 				case Mensaje.MSG_CONEX: //mensaje de conexion
 					MensajeConexion msgConex = (MensajeConexion) mensaje;
+					msgConex.mostrarInfo();
 
 					Usuario usr = msgConex.getUsuario();
 
@@ -52,7 +53,7 @@ public class OyenteCliente extends Thread implements Serializable {
 					monitor.requestWrite();
 					tablaUsuarios.put(usr.getId(), usr);
 					monitor.releaseWrite();
-
+					
 					fout.writeObject(new MensajeConfirmacionConexion("Servidor", usr.getId(), usr.toString()));
 					fout.flush();
 
@@ -60,6 +61,7 @@ public class OyenteCliente extends Thread implements Serializable {
 
 				case Mensaje.MSG_LISTA: //mensaje de lista de usuarios
 					MensajeListaUsuarios msgLista = (MensajeListaUsuarios) mensaje;
+					msgLista.mostrarInfo();
 
 					monitor.requestRead();
 					String lista = tablaUsuarios.toString();
@@ -72,6 +74,7 @@ public class OyenteCliente extends Thread implements Serializable {
 
 				case Mensaje.MSG_FICH: //mensaje de emitir fichero
 					MensajePedirFichero msgFich = (MensajePedirFichero) mensaje;
+					msgFich.mostrarInfo();
 
 					monitor.requestRead();
 					Iterator<String> it = tablaUsuarios.keySet().iterator();
@@ -97,12 +100,13 @@ public class OyenteCliente extends Thread implements Serializable {
 						usr2.getFout().writeObject(new MensajePedirFichero("Servidor", usr2.getId(), msgFich.getFichero()));
 						usr2.getFout().flush();
 					}
-
+					
 					break;
 
 				case Mensaje.MSG_OK_CLI_SER:
 					//mensaje de preparado S->C
 					MensajePreparadoClienteServidor msgCS = (MensajePreparadoClienteServidor) mensaje;
+					msgCS.mostrarInfo();
 
 					fout.writeObject(new MensajePreparadoServidorCliente("Servidor", "Receptor", msgCS.getEmisor(), msgCS.getPuerto(), msgCS.getIPEmisor()));
 					fout.flush();
@@ -112,6 +116,7 @@ public class OyenteCliente extends Thread implements Serializable {
 				case Mensaje.MSG_CERRAR:
 					//mensaje de cerrar conex
 					MensajeCerrarConexion msgCC=(MensajeCerrarConexion) mensaje;
+					msgCC.mostrarInfo();
 
 					monitor.requestWrite();
 					tablaUsuarios.remove(msgCC.getOrigen());

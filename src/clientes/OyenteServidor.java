@@ -35,6 +35,7 @@ public class OyenteServidor extends Thread{
 				case Mensaje.MSG_CONF_CONEX:
 					//mensaje de confirmacion de conexion
 					MensajeConfirmacionConexion msgConfConex = (MensajeConfirmacionConexion) mensaje;
+					msgConfConex.mostrarInfo();
 
 					System.out.println(msgConfConex.getMsg());
 
@@ -43,6 +44,7 @@ public class OyenteServidor extends Thread{
 				case Mensaje.MSG_CONF_LISTA:
 					//mensaje de confirmacion.lista de usuario
 					MensajeConfirmacionListaUsuarios msgCLU = (MensajeConfirmacionListaUsuarios) mensaje;
+					msgCLU.mostrarInfo();
 
 					System.out.println(msgCLU.getLista());
 
@@ -51,6 +53,7 @@ public class OyenteServidor extends Thread{
 				case Mensaje.MSG_FICH:
 					//mensaje de emitir fichero
 					MensajePedirFichero msgFich = (MensajePedirFichero) mensaje;
+					msgFich.mostrarInfo();
 
 					int port = 400;
 
@@ -71,6 +74,7 @@ public class OyenteServidor extends Thread{
 				case Mensaje.MSG_OK_SER_CLI:
 					//mensaje de preparado S->C
 					MensajePreparadoServidorCliente msgPSC = (MensajePreparadoServidorCliente) mensaje;
+					msgPSC.mostrarInfo();
 
 					Socket fileSocket = new Socket(msgPSC.getIPEmisor(), msgPSC.getPuerto());
 
@@ -86,7 +90,6 @@ public class OyenteServidor extends Thread{
 				case Mensaje.MSG_CONF_CERRAR:
 					//mensaje de confirmacion cerrar conex
 					MensajeConfirmacionCerrarConexion msgCCC = (MensajeConfirmacionCerrarConexion) mensaje;
-
 					msgCCC.mostrarInfo();
 
 					repeat = false;
