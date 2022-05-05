@@ -93,8 +93,8 @@ public class OyenteCliente extends Thread implements Serializable {
 						//DA FALLO HAY QUE RESTRUCTURAR COSAS
 
 
-						usr2.getFout().writeObject(new MensajePedirFichero("Servidor", usr2.getId(), msgFich.getFichero()));
-						usr2.getFout().flush();
+//						usr2.getFout().writeObject(new MensajePedirFichero("Servidor", usr2.getId(), msgFich.getFichero()));
+//						usr2.getFout().flush();
 					}
 					
 					break;

@@ -12,10 +12,13 @@ import java.nio.file.Paths;
 public class OyenteServidor extends Thread{
     private final Socket s;
     private final Usuario usuario;
+    private ObjectOutputStream fout;
 
-    public OyenteServidor(Socket s, Usuario usuario){
+    public OyenteServidor(Socket s, Usuario usuario,ObjectOutputStream fout){
         this.s = s;
         this.usuario = usuario;
+        this.fout=fout;
+
     }
 
     @Override
@@ -23,7 +26,6 @@ public class OyenteServidor extends Thread{
 
          try {
             ObjectInputStream fin = new ObjectInputStream(s.getInputStream());
-            ObjectOutputStream fout = new ObjectOutputStream(s.getOutputStream());
 
             boolean repeat = true;
 
@@ -50,21 +52,21 @@ public class OyenteServidor extends Thread{
 
                     case Mensaje.MSG_FICH:
                         //mensaje de emitir fichero
-                        MensajePedirFichero msgFich = (MensajePedirFichero) mensaje;
-
-                        int port = 400;
-
-                        ServerSocket ss = new ServerSocket(port);
-
-                        fout.writeObject(new MensajePreparadoClienteServidor(usuario.getId(), "Servidor", usuario.getId(), port, usuario.getDireccionIP()));
-                        fout.flush();
-
-                        Socket sendSocket = ss.accept();
-                        String sourceFileName = usuario.getRuta() + File.separator + msgFich.getFichero();
-                        (new ObjectOutputStream(sendSocket.getOutputStream())).writeObject(new File(sourceFileName));
-
-                        ss.close();
-                        sendSocket.close();
+//                        MensajePedirFichero msgFich = (MensajePedirFichero) mensaje;
+//
+//                        int port = 400;
+//
+//                        ServerSocket ss = new ServerSocket(port);
+//
+//                        fout.writeObject(new MensajePreparadoClienteServidor(usuario.getId(), "Servidor", usuario.getId(), port, usuario.getDireccionIP()));
+//                        fout.flush();
+////
+//                        Socket sendSocket = ss.accept();
+//                        String sourceFileName = usuario.getRuta() + File.separator + msgFich.getFichero();
+//                        (new ObjectOutputStream(sendSocket.getOutputStream())).writeObject(new File(sourceFileName));
+//
+//                        ss.close();
+//                        sendSocket.close();
 
                         break;
 
