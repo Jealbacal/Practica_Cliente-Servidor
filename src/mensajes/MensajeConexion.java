@@ -4,6 +4,7 @@ import usuarios.Usuario;
 
 @SuppressWarnings("serial")
 public class MensajeConexion extends Mensaje {
+
 	private final Usuario usuario;
 
 	public MensajeConexion(String origen, String destino, Usuario usuario) {

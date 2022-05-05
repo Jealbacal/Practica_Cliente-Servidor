@@ -12,10 +12,9 @@ import java.net.Socket;
 public class Cliente {
     private static final int puerto =999;
 
-
     public static void main(String args[]) throws IOException {
 
-        Usuario usuario=altaUsuario();
+        Usuario usuario = altaUsuario();
         Socket s = new Socket(usuario.getDireccionIP(), puerto);
 
 
@@ -44,7 +43,7 @@ public class Cliente {
                     System.out.println("¿Cual es el nombre del Película?");
                     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
                     String fichero = br.readLine();
-                    fout.writeObject(new MensajePedirFichero("Cliente", "Servidor", fichero));
+                    fout.writeObject(new MensajePedirFichero("Cliente", "Servidor", usuario.getId(), fichero));
                     fout.flush();
                     break;
                 }

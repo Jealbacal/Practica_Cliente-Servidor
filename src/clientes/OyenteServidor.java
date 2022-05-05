@@ -59,7 +59,7 @@ public class OyenteServidor extends Thread{
 
 					ServerSocket ss = new ServerSocket(port);
 
-					fout.writeObject(new MensajePreparadoClienteServidor(usuario.getId(), "Servidor", usuario.getId(), port, usuario.getDireccionIP()));
+					fout.writeObject(new MensajePreparadoClienteServidor(usuario.getId(), "Servidor", msgFich.getReceptor(), usuario.getId(), port, usuario.getDireccionIP()));
 					fout.flush();
 
 					Socket sendSocket = ss.accept();
@@ -85,6 +85,9 @@ public class OyenteServidor extends Thread{
 
 					fileSocket.close();
 
+					//TODO semaforo/lock evitar acceso a lista durante actualizacion
+					usuario.actualizarLista();
+
 					break;
 
 				case Mensaje.MSG_CONF_CERRAR:
@@ -93,6 +96,12 @@ public class OyenteServidor extends Thread{
 					msgCCC.mostrarInfo();
 
 					repeat = false;
+
+					break;
+
+				case Mensaje.MSG_ERROR:
+					MensajeError msgErr = (MensajeError) mensaje;
+					msgErr.mostrarInfo();
 
 					break;
 

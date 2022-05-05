@@ -3,24 +3,26 @@ package mensajes;
 @SuppressWarnings("serial")
 public class MensajePreparadoClienteServidor extends Mensaje {
 
+	private final String receptor;
 	private final String emisor;
 	private final int puerto;
 	private final String IPEmisor;
 
-	public MensajePreparadoClienteServidor(String origen, String destino, String emisor, int puerto, String IPEmisor) {
+	public MensajePreparadoClienteServidor(String origen, String destino, String receptor, String emisor, int puerto, String IPEmisor) {
 		super(MSG_OK_CLI_SER, origen, destino);
+		this.receptor = receptor;
 		this.emisor = emisor;
 		this.puerto = puerto;
 		this.IPEmisor = IPEmisor;
 	}
 
+	public String getReceptor() { return receptor; }
+	
 	public String getEmisor() { return emisor; }
 
 	public String getIPEmisor() { return IPEmisor; }
 
-	public int getPuerto() {
-		return puerto;
-	}
+	public int getPuerto() { return puerto; }
 
 	@Override
 	public void mostrarInfo() {

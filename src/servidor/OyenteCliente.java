@@ -53,7 +53,7 @@ public class OyenteCliente extends Thread implements Serializable {
 					monitor.requestWrite();
 					tablaUsuarios.put(usr.getId(), usr);
 					monitor.releaseWrite();
-					
+
 					fout.writeObject(new MensajeConfirmacionConexion("Servidor", usr.getId(), usr.toString()));
 					fout.flush();
 
@@ -94,13 +94,14 @@ public class OyenteCliente extends Thread implements Serializable {
 					monitor.releaseRead();
 
 					if (usr2 != null) {
-						//DA FALLO HAY QUE RESTRUCTURAR COSAS
-
-
-						usr2.getFout().writeObject(new MensajePedirFichero("Servidor", usr2.getId(), msgFich.getFichero()));
+						usr2.getFout().writeObject(new MensajePedirFichero("Servidor", usr2.getId(), msgFich.getReceptor(), msgFich.getFichero()));
 						usr2.getFout().flush();
 					}
-					
+					else {
+						fout.writeObject(new MensajeError("Servidor", msgFich.getOrigen(), "No se encontro el fichero " + msgFich.getFichero()));
+						fout.flush();
+					}
+
 					break;
 
 				case Mensaje.MSG_OK_CLI_SER:
@@ -108,8 +109,12 @@ public class OyenteCliente extends Thread implements Serializable {
 					MensajePreparadoClienteServidor msgCS = (MensajePreparadoClienteServidor) mensaje;
 					msgCS.mostrarInfo();
 
-					fout.writeObject(new MensajePreparadoServidorCliente("Servidor", "Receptor", msgCS.getEmisor(), msgCS.getPuerto(), msgCS.getIPEmisor()));
-					fout.flush();
+					monitor.requestRead();
+					Usuario receptor = tablaUsuarios.get(msgCS.getReceptor());
+					monitor.releaseRead();
+
+					receptor.getFout().writeObject(new MensajePreparadoServidorCliente("Servidor", receptor.getId(), msgCS.getEmisor(), msgCS.getPuerto(), msgCS.getIPEmisor()));
+					receptor.getFout().flush();
 
 					break;
 
@@ -126,6 +131,12 @@ public class OyenteCliente extends Thread implements Serializable {
 
 					fout.writeObject(new MensajeConfirmacionCerrarConexion("Servidor",msgCC.getOrigen()));
 					fout.flush();
+
+					break;
+
+				case Mensaje.MSG_ERROR:
+					MensajeError msgErr = (MensajeError) mensaje;
+					msgErr.mostrarInfo();
 
 					break;
 
