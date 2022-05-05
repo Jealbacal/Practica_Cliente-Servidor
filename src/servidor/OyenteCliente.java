@@ -28,20 +28,16 @@ public class OyenteCliente extends Thread implements Serializable {
 	@Override
 	public void run() {
 		try {
-
 			ObjectInputStream fin = new ObjectInputStream(s.getInputStream());
 			ObjectOutputStream fout = new ObjectOutputStream(s.getOutputStream());
 
 			boolean repeat = true;
-
+			//TODO ARREGLAR ORIGEN/DESTINO DE MENSAJES
 			while(repeat){
-
 				Mensaje mensaje = (Mensaje) fin.readObject();
 
-
 				switch (mensaje.getTipo()) {
-
-				case Mensaje.MSG_CONEX: //mensaje de conexion
+				case Mensaje.MSG_CONEX: //Mensaje de conexion
 					MensajeConexion msgConex = (MensajeConexion) mensaje;
 					msgConex.mostrarInfo();
 
@@ -59,7 +55,7 @@ public class OyenteCliente extends Thread implements Serializable {
 
 					break;
 
-				case Mensaje.MSG_LISTA: //mensaje de lista de usuarios
+				case Mensaje.MSG_LISTA: //Mensaje de lista de usuarios
 					MensajeListaUsuarios msgLista = (MensajeListaUsuarios) mensaje;
 					msgLista.mostrarInfo();
 
@@ -72,7 +68,7 @@ public class OyenteCliente extends Thread implements Serializable {
 
 					break;
 
-				case Mensaje.MSG_FICH: //mensaje de emitir fichero
+				case Mensaje.MSG_FICH: //Mensaje de emitir fichero
 					MensajePedirFichero msgFich = (MensajePedirFichero) mensaje;
 					msgFich.mostrarInfo();
 
@@ -104,8 +100,7 @@ public class OyenteCliente extends Thread implements Serializable {
 
 					break;
 
-				case Mensaje.MSG_OK_CLI_SER:
-					//mensaje de preparado S->C
+				case Mensaje.MSG_OK_CLI_SER: //Mensaje de preparado S->C
 					MensajePreparadoClienteServidor msgCS = (MensajePreparadoClienteServidor) mensaje;
 					msgCS.mostrarInfo();
 
@@ -118,9 +113,8 @@ public class OyenteCliente extends Thread implements Serializable {
 
 					break;
 
-				case Mensaje.MSG_CERRAR:
-					//mensaje de cerrar conex
-					MensajeCerrarConexion msgCC=(MensajeCerrarConexion) mensaje;
+				case Mensaje.MSG_CERRAR: //Mensaje de cerrar conex
+					MensajeCerrarConexion msgCC = (MensajeCerrarConexion) mensaje;
 					msgCC.mostrarInfo();
 
 					monitor.requestWrite();
@@ -134,18 +128,15 @@ public class OyenteCliente extends Thread implements Serializable {
 
 					break;
 
-				case Mensaje.MSG_ERROR:
+				case Mensaje.MSG_ERROR: //Mensaje de error
 					MensajeError msgErr = (MensajeError) mensaje;
 					msgErr.mostrarInfo();
 
 					break;
 
 				default: break;
-
 				}
 			}
 		} catch (IOException | ClassNotFoundException | InterruptedException e) { e.printStackTrace(); }
 	}
-
-
 }

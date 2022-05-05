@@ -20,10 +20,9 @@ public class Usuario implements Serializable{
 		this.ID = ID;
 		this.dirIP = dirIP;
 		this.rutaInfo = rutaInfo;
+		
 		listaFich = new ArrayList<String>();
-		for (File entry : (new File(rutaInfo)).listFiles()) {
-			listaFich.add(entry.getName());
-		}
+		for (File entry : (new File(rutaInfo)).listFiles()) listaFich.add(entry.getName());
 	}
 
 	public ObjectOutputStream getFout() { return fout; }
@@ -36,9 +35,7 @@ public class Usuario implements Serializable{
 
 	public void actualizarLista() {
 		listaFich = new ArrayList<String>();
-		for (File entry : (new File(rutaInfo)).listFiles()) {
-			listaFich.add(entry.getName());
-		}
+		for (File entry : (new File(rutaInfo)).listFiles()) listaFich.add(entry.getName());
 	}
 
 	public String getId() { return ID; }
@@ -50,6 +47,6 @@ public class Usuario implements Serializable{
 	public ArrayList<String> getLista() { return listaFich; }
 	
 	public String toString() { 
-		return "Usuario " + ID + " con IP " + dirIP + " y datos almacenados en " + rutaInfo + "\n";
+		return "Usuario " + ID + " con IP " + dirIP + " y datos almacenados en " + rutaInfo;
 	}
 }

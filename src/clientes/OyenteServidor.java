@@ -27,16 +27,14 @@ public class OyenteServidor extends Thread{
 
 		try {
 			ObjectInputStream fin = new ObjectInputStream(s.getInputStream());
-
+			
 			boolean repeat = true;
-
+			//TODO ARREGLAR ORIGEN/DESTINO DE MENSAJES
 			while (repeat) {
 				Mensaje mensaje = (Mensaje) fin.readObject();
 
 				switch (mensaje.getTipo()) {
-
-				case Mensaje.MSG_CONF_CONEX:
-					//mensaje de confirmacion de conexion
+				case Mensaje.MSG_CONF_CONEX: //Mensaje de confirmacion de conexion
 					MensajeConfirmacionConexion msgConfConex = (MensajeConfirmacionConexion) mensaje;
 					msgConfConex.mostrarInfo();
 
@@ -44,8 +42,7 @@ public class OyenteServidor extends Thread{
 
 					break;
 
-				case Mensaje.MSG_CONF_LISTA:
-					//mensaje de confirmacion.lista de usuario
+				case Mensaje.MSG_CONF_LISTA: //Mensaje de confirmacion.lista de usuario
 					MensajeConfirmacionListaUsuarios msgCLU = (MensajeConfirmacionListaUsuarios) mensaje;
 					msgCLU.mostrarInfo();
 
@@ -53,16 +50,15 @@ public class OyenteServidor extends Thread{
 
 					break;
 
-				case Mensaje.MSG_FICH:
-					//mensaje de emitir fichero
+				case Mensaje.MSG_FICH: //Mensaje de emitir fichero
 					MensajePedirFichero msgFich = (MensajePedirFichero) mensaje;
 					msgFich.mostrarInfo();
+					
+					//TODO lock para los puertos, que no tomen el mismo sin querer
+					ServerSocket ss = new ServerSocket(0);
 
-					int port = 400;
-
-					ServerSocket ss = new ServerSocket(port);
-
-					fout.writeObject(new MensajePreparadoClienteServidor(usuario.getId(), "Servidor", msgFich.getReceptor(), usuario.getId(), port, usuario.getDireccionIP()));
+					fout.writeObject(new MensajePreparadoClienteServidor(usuario.getId(), "Servidor", msgFich.getReceptor(),
+							usuario.getId(), ss.getLocalPort(), usuario.getDireccionIP()));
 					fout.flush();
 
 					Socket sendSocket = ss.accept();
@@ -76,8 +72,7 @@ public class OyenteServidor extends Thread{
 
 					break;
 
-				case Mensaje.MSG_OK_SER_CLI:
-					//mensaje de preparado S->C
+				case Mensaje.MSG_OK_SER_CLI: //Mensaje de preparado S->C
 					MensajePreparadoServidorCliente msgPSC = (MensajePreparadoServidorCliente) mensaje;
 					msgPSC.mostrarInfo();
 
@@ -86,6 +81,7 @@ public class OyenteServidor extends Thread{
 					File source = (File) (new ObjectInputStream(fileSocket.getInputStream())).readObject();
 					String destFileName = usuario.getRuta() + File.separator + source.getName();
 					File dest = new File(destFileName);
+					
 					Files.copy(source.toPath(), dest.toPath());
 
 					fileSocket.close();
@@ -97,30 +93,27 @@ public class OyenteServidor extends Thread{
 
 					break;
 
-				case Mensaje.MSG_CONF_CERRAR:
-					//mensaje de confirmacion cerrar conex
+				case Mensaje.MSG_CONF_CERRAR: //Mensaje de confirmacion cerrar conex
 					MensajeConfirmacionCerrarConexion msgCCC = (MensajeConfirmacionCerrarConexion) mensaje;
 					msgCCC.mostrarInfo();
 
 					repeat = false;
+					
 					sMenu.release();
+					
 					break;
 
-				case Mensaje.MSG_ERROR:
+				case Mensaje.MSG_ERROR: //Mensaje de error
 					MensajeError msgErr = (MensajeError) mensaje;
 					msgErr.mostrarInfo();
+					
 					sMenu.release();
+					
 					break;
 
 				default: break;
-
-
 				}
 			}
-		}
-		catch (IOException | ClassNotFoundException e) {
-			e.printStackTrace();
-		}
-
+		} catch (IOException | ClassNotFoundException e) { e.printStackTrace(); }
 	}
 }
