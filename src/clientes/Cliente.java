@@ -28,7 +28,7 @@ public class Cliente {
 
         int op= 0;
 
-        while (op !=3) {
+        while (op !=4) {
             op=menu();
             //segun el menu manda mensajes al servidor
 
@@ -49,6 +49,11 @@ public class Cliente {
                     break;
                 }
                 case 3 -> {
+                    for(String pelicula : usuario.getLista())
+                        System.out.println(pelicula);
+                    break;
+                }
+                case 4->{
                     fout.writeObject(new MensajeCerrarConexion("Cliente", "Servidor"));
                     fout.flush();
                     break;
@@ -71,23 +76,27 @@ public class Cliente {
         System.out.println("|                MENU                  |");
         System.out.println(" --------------------------------------");
         int op=-1;
-        while(op<=0 || op >3 ){
+        while(op<=0 || op >4 ){
 
             System.out.println( "1- Consulta lista de usuarios");
             System.out.println( "2- Pedir fichero");
-            System.out.println( "3- Salir");
+            System.out.println( "3- Ver lista de Peliculas");
+            System.out.println( "4- Salir");
 
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
-            if(Integer.parseInt(br.readLine())==1){
+            int eleccion=Integer.parseInt(br.readLine());
+            if(eleccion==1){
                 op=1;
             }
-            else if (Integer.parseInt(br.readLine())==2){
+            else if (eleccion==2){
 
                 op=2;
             }
-            else if (Integer.parseInt(br.readLine())==3){
+            else if (eleccion==3){
                 op=3;
+            }
+            else if (eleccion==4){
+                op=4;
             }
         }
 
