@@ -54,7 +54,7 @@ public class Cliente {
                     break;
                 }
                 case 4->{
-                    fout.writeObject(new MensajeCerrarConexion("Cliente", "Servidor"));
+                    fout.writeObject(new MensajeCerrarConexion(usuario.getId(), "Servidor"));
                     fout.flush();
                     break;
                 }
