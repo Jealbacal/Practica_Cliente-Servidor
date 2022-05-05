@@ -1,6 +1,10 @@
 package usuarios;
 
+import servidor.OyenteCliente;
+
 import java.io.File;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -11,7 +15,10 @@ public class Usuario implements Serializable{
 	private final String dirIP;
 	private final String rutaInfo;
 	private ArrayList<String> listaFich;
-	private  transient Socket s;
+	private ObjectOutputStream fout;
+	private ObjectInputStream fin;
+
+
 
 
 
@@ -28,12 +35,22 @@ public class Usuario implements Serializable{
 
 	}
 
-	public void setS(Socket s) {
-		this.s = s;
+
+	public ObjectOutputStream getFout() {
+		return fout;
 	}
 
+	public void setFout(ObjectOutputStream fout) {
+		this.fout = fout;
+	}
 
+	public ObjectInputStream getFin() {
+		return fin;
+	}
 
+	public void setFin(ObjectInputStream fin) {
+		this.fin = fin;
+	}
 
 	public void addFileToList(String fileName) { listaFich.add(fileName); }
 
@@ -45,7 +62,6 @@ public class Usuario implements Serializable{
 	
 	public ArrayList<String> getLista() { return listaFich; }
 	
-	public Socket getSocket() { return s; }
 
 	public String toString() { 
 		return "Usuario " + ID + " con IP " + dirIP + " y datos almacenados en " + rutaInfo + "\n";

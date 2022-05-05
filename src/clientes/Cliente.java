@@ -18,7 +18,7 @@ public class Cliente {
 
         Usuario usuario=altaUsuario();
         Socket s = new Socket(usuario.getDireccionIP(), puerto);
-        usuario.setS(s);
+
 
         ObjectOutputStream fout = new ObjectOutputStream(s.getOutputStream());
         MensajeConexion msg= new MensajeConexion("Cliente","Servidor" ,usuario);

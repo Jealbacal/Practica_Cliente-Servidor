@@ -7,11 +7,12 @@ import monitores.MonitorWR;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.net.Socket;
 import java.util.Iterator;
 import java.util.Map;
 
-public class OyenteCliente extends Thread{
+public class OyenteCliente extends Thread implements Serializable {
 	private final Socket s;
 	private final Map<String, Usuario> tablaUsuarios;
 	private final MonitorWR monitor;
@@ -43,7 +44,10 @@ public class OyenteCliente extends Thread{
 					MensajeConexion msgConex = (MensajeConexion) mensaje;
 					
 					Usuario usr = msgConex.getUsuario();
-					
+
+//					usr.setFin(fin);
+//					usr.setFout(fout);
+
 					monitor.requestWrite();
 					tablaUsuarios.put(usr.getId(), usr);
 					monitor.releaseWrite();
@@ -88,9 +92,9 @@ public class OyenteCliente extends Thread{
 					if (usr2 != null) {
 						//DA FALLO HAY QUE RESTRUCTURAR COSAS
 
-						ObjectOutputStream fout2 = new ObjectOutputStream((usr2.getSocket()).getOutputStream());
-						fout2.writeObject(new MensajePedirFichero("Servidor", usr2.getId(), msgFich.getFichero()));
-						fout2.flush();
+
+						usr2.getFout().writeObject(new MensajePedirFichero("Servidor", usr2.getId(), msgFich.getFichero()));
+						usr2.getFout().flush();
 					}
 					
 					break;
