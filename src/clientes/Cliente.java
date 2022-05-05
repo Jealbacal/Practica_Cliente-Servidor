@@ -8,27 +8,29 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.concurrent.Semaphore;
 
 public class Cliente {
     private static final int puerto =999;
 
-    public static void main(String args[]) throws IOException {
+    public static void main(String args[]) throws IOException, InterruptedException {
 
         Usuario usuario = altaUsuario();
         Socket s = new Socket(usuario.getDireccionIP(), puerto);
 
-
+        Semaphore sMenu= new Semaphore(0,true);
         ObjectOutputStream fout = new ObjectOutputStream(s.getOutputStream());
         MensajeConexion msg= new MensajeConexion("Cliente","Servidor" ,usuario);
         fout.writeObject(msg);
         fout.flush();
 
-        (new OyenteServidor(s,usuario,fout)).start();
+        (new OyenteServidor(s,usuario,fout,sMenu)).start();
 
         int op= 0;
 
         while (op !=4) {
-            op = menu();
+            sMenu.acquire();
+            op=menu();
             //segun el menu manda mensajes al servidor
 
             switch (op) {
@@ -40,7 +42,7 @@ public class Cliente {
                     break;
                 }
                 case 2 -> {
-                    System.out.println("¿Cual es el nombre del fichero?");
+                    System.out.println("ï¿½Cual es el nombre del fichero?");
                     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
                     String fichero = br.readLine();
                     fout.writeObject(new MensajePedirFichero("Cliente", "Servidor", usuario.getId(), fichero));
@@ -50,6 +52,8 @@ public class Cliente {
                 case 3 -> {
                     for(String pelicula : usuario.getLista())
                         System.out.println(pelicula);
+
+                    sMenu.release();
                     break;
                 }
                 case 4->{
@@ -61,7 +65,6 @@ public class Cliente {
                     break;
                 }
             }
-
         }
         //Creo que aca hay que cerrar el sockect
 

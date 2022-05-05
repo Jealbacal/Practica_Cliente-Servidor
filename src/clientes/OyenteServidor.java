@@ -7,16 +7,19 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.file.Files;
+import java.util.concurrent.Semaphore;
 
 public class OyenteServidor extends Thread{
 	private final Socket s;
 	private final Usuario usuario;
 	private ObjectOutputStream fout;
+	private Semaphore sMenu;
 
-	public OyenteServidor(Socket s, Usuario usuario, ObjectOutputStream fout){
+	public OyenteServidor(Socket s, Usuario usuario, ObjectOutputStream fout, Semaphore sMenu){
 		this.s = s;
 		this.usuario = usuario;
 		this.fout = fout;
+		this.sMenu = sMenu;
 	}
 
 	@Override
@@ -37,7 +40,7 @@ public class OyenteServidor extends Thread{
 					MensajeConfirmacionConexion msgConfConex = (MensajeConfirmacionConexion) mensaje;
 					msgConfConex.mostrarInfo();
 
-					System.out.println(msgConfConex.getMsg());
+					sMenu.release();
 
 					break;
 
@@ -46,7 +49,7 @@ public class OyenteServidor extends Thread{
 					MensajeConfirmacionListaUsuarios msgCLU = (MensajeConfirmacionListaUsuarios) mensaje;
 					msgCLU.mostrarInfo();
 
-					System.out.println(msgCLU.getLista());
+					sMenu.release();
 
 					break;
 
@@ -69,6 +72,8 @@ public class OyenteServidor extends Thread{
 					ss.close();
 					sendSocket.close();
 
+					sMenu.release();
+
 					break;
 
 				case Mensaje.MSG_OK_SER_CLI:
@@ -85,6 +90,8 @@ public class OyenteServidor extends Thread{
 
 					fileSocket.close();
 
+					sMenu.release();
+
 					//TODO semaforo/lock evitar acceso a lista durante actualizacion
 					usuario.actualizarLista();
 
@@ -96,13 +103,13 @@ public class OyenteServidor extends Thread{
 					msgCCC.mostrarInfo();
 
 					repeat = false;
-
+					sMenu.release();
 					break;
 
 				case Mensaje.MSG_ERROR:
 					MensajeError msgErr = (MensajeError) mensaje;
 					msgErr.mostrarInfo();
-
+					sMenu.release();
 					break;
 
 				default: break;
