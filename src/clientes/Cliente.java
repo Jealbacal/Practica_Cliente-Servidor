@@ -41,7 +41,7 @@ public class Cliente {
                     break;
                 }
                 case 2 -> {
-                    System.out.println("¿Cual es el nombre del libro?");
+                    System.out.println("¿Cual es el nombre del Película?");
                     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
                     String fichero = br.readLine();
                     fout.writeObject(new MensajePedirFichero("Cliente", "Servidor", fichero));

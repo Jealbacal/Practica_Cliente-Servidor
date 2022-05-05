@@ -43,6 +43,7 @@
 hs_err_pid*
 
 *Ficheros**/
+*.txt
 
 #neatbeans files (creo)
 **/nbproject/private/
