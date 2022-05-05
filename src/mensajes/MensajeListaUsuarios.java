@@ -1,5 +1,6 @@
 package mensajes;
 
+@SuppressWarnings("serial")
 public class MensajeListaUsuarios extends Mensaje {
 
 	public MensajeListaUsuarios(String origen, String destino) {

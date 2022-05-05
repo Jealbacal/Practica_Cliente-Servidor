@@ -2,7 +2,7 @@ package mensajes;
 
 import usuarios.Usuario;
 
-
+@SuppressWarnings("serial")
 public class MensajeConexion extends Mensaje {
 	private final Usuario usuario;
 

@@ -1,7 +1,6 @@
 package mensajes;
 
-import java.net.Socket;
-
+@SuppressWarnings("serial")
 public class MensajePreparadoClienteServidor extends Mensaje {
 
 	private final String emisor;

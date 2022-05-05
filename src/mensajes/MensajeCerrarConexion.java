@@ -1,5 +1,6 @@
 package mensajes;
 
+@SuppressWarnings("serial")
 public class MensajeCerrarConexion extends Mensaje {
 
 	public MensajeCerrarConexion(String origen, String destino) {

@@ -1,5 +1,6 @@
 package mensajes;
 
+@SuppressWarnings("serial")
 public class MensajePedirFichero extends Mensaje {
 	private final String fichero;
 

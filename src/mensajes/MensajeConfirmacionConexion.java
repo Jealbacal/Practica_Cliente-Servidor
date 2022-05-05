@@ -1,5 +1,6 @@
 package mensajes;
 
+@SuppressWarnings("serial")
 public class MensajeConfirmacionConexion extends Mensaje {
 	private final String msgConfirm;
 
