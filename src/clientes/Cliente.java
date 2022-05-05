@@ -28,7 +28,7 @@ public class Cliente {
         int op= 0;
 
         while (op !=4) {
-            op=menu();
+            op = menu();
             //segun el menu manda mensajes al servidor
 
             switch (op) {
@@ -40,7 +40,7 @@ public class Cliente {
                     break;
                 }
                 case 2 -> {
-                    System.out.println("¿Cual es el nombre del Película?");
+                    System.out.println("�Cual es el nombre del fichero?");
                     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
                     String fichero = br.readLine();
                     fout.writeObject(new MensajePedirFichero("Cliente", "Servidor", usuario.getId(), fichero));
@@ -88,7 +88,6 @@ public class Cliente {
                 op=1;
             }
             else if (eleccion==2){
-
                 op=2;
             }
             else if (eleccion==3){
