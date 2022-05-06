@@ -51,8 +51,8 @@ public class Cliente {
 			op = menu();
 			lock.releaseLock(ID_CLI);
 			lock.takeLock(ID_OS);
+			
 			//segun el menu manda mensajes al servidor
-
 			switch (op) {
 			case OP_LISTA_USUARIOS:
 				fout.writeObject(new MensajeListaUsuarios(usuario.getId(), "Servidor"));

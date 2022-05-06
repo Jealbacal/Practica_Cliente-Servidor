@@ -14,7 +14,6 @@ public class MensajeConfirmacionListaUsuarios extends Mensaje {
 	@Override
 	public void mostrarInfo() {
 		System.out.println(getOrigen() + " envia lista de usuarios a " + getDestino());
-		System.out.println(lista);
 	}
 
 }

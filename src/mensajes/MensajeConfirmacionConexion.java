@@ -14,6 +14,5 @@ public class MensajeConfirmacionConexion extends Mensaje {
 	@Override
 	public void mostrarInfo() {
 		System.out.println("Conexion realizada correctamente entre " + getOrigen() + " y " + getDestino());
-		System.out.println(msgConfirm);
 	}
 }

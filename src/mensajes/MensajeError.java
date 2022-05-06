@@ -11,8 +11,6 @@ public class MensajeError extends Mensaje {
 	}
 
 	@Override
-	public void mostrarInfo() {
-		System.out.println(msg);
-	}
+	public void mostrarInfo() { System.out.println(msg); }
 
 }
