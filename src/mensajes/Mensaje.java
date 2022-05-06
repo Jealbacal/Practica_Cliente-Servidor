@@ -14,6 +14,7 @@ public abstract class Mensaje implements Serializable {
 	public static final int MSG_CERRAR = 7;
 	public static final int MSG_CONF_CERRAR = 8;
 	public static final int MSG_ERROR = 9;
+	public static final int MSG_CONF_DOWN=10;
 	
 	private int tipo;
 	private String origen, destino;

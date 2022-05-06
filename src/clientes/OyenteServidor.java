@@ -87,11 +87,22 @@ public class OyenteServidor extends Thread{
 					usuario.getWriteSem().acquire();
 					//Escritura
 					usuario.actualizarLista();
+
+
+
 					//Release de escritura
 					usuario.getWriteSem().release();
 
+					fout.reset();
+					fout.writeObject(new MensajeConfirmacionDescarga(usuario.getId(), "Servidor", usuario,
+							msgPSC.getEmisor()));
+
+					fout.flush();
+
 					System.out.println("Descarga completada, puede encontrar el fichero en su carpeta " +
 							"o ver su lista de ficheros desde el menu.");
+
+
 
 					lock.releaseLock(Cliente.ID_OS);
 

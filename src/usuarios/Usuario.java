@@ -18,8 +18,7 @@ public class Usuario implements Serializable{
 	private final Semaphore writeSem;
 	private final AtomicInteger readCount;
 	private ArrayList<String> listaFich;
-	private ObjectOutputStream fout;
-	private ObjectInputStream fin;
+
 
 	public Usuario(String ID, String dirIP, String rutaInfo, Semaphore readSem, Semaphore writeSem, AtomicInteger readCount) {
 		this.ID = ID;
@@ -32,14 +31,6 @@ public class Usuario implements Serializable{
 		listaFich = new ArrayList<String>();
 		for (File entry : (new File(rutaInfo)).listFiles()) listaFich.add(entry.getName());
 	}
-
-	public void setFout(ObjectOutputStream fout) { this.fout = fout; }
-	
-	public void setFin(ObjectInputStream fin) { this.fin = fin; }
-	
-	public ObjectOutputStream getFout() { return fout; }
-
-	public ObjectInputStream getFin() { return fin; }
 
 	public String getId() { return ID; }
 

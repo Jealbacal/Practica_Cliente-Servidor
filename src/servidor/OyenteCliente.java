@@ -15,13 +15,15 @@ import java.util.Map;
 @SuppressWarnings("serial")
 public class OyenteCliente extends Thread implements Serializable {
 	private final Socket s;
-	private final Map<String, Usuario> tablaUsuarios;
+	private  Map<String, Usuario> tablaUsuarios;
+	private  Map<String,ObjectOutputStream> tablaCanales;
 	private final MonitorWR monitor;
 
 
-	public OyenteCliente(Socket s, Map<String, Usuario> tablaUsuarios, MonitorWR monitor){
+	public OyenteCliente(Socket s, Map<String, Usuario> tablaUsuarios,Map<String,ObjectOutputStream> tablaCanales, MonitorWR monitor){
 		this.s = s;
 		this.tablaUsuarios = tablaUsuarios;
+		this.tablaCanales=tablaCanales;
 		this.monitor = monitor;
 	}
 
@@ -43,8 +45,12 @@ public class OyenteCliente extends Thread implements Serializable {
 
 					Usuario usr = msgConex.getUsuario();
 
-					usr.setFin(fin);
-					usr.setFout(fout);
+
+
+					monitor.releaseWrite();
+					tablaCanales.put(usr.getId(),fout);
+					monitor.releaseWrite();
+
 
 					monitor.requestWrite();
 					tablaUsuarios.put(usr.getId(), usr);
@@ -100,8 +106,13 @@ public class OyenteCliente extends Thread implements Serializable {
 					monitor.releaseRead();
 
 					if (usr2 != null) {
-						usr2.getFout().writeObject(new MensajePedirFichero("Servidor", usr2.getId(), msgFich.getReceptor(), msgFich.getFichero()));
-						usr2.getFout().flush();
+
+						monitor.requestRead();
+						ObjectOutputStream canalEmisor =tablaCanales.get(usr2.getId());
+						monitor.releaseRead();
+						canalEmisor.writeObject(new MensajePedirFichero("Servidor", usr2.getId(), msgFich.getReceptor(), msgFich.getFichero()));
+						canalEmisor.flush();
+
 					}
 					else {
 						fout.writeObject(new MensajeError("Servidor", msgFich.getOrigen(), "No se encontro el fichero " + msgFich.getFichero()));
@@ -118,8 +129,12 @@ public class OyenteCliente extends Thread implements Serializable {
 					Usuario receptor = tablaUsuarios.get(msgCS.getReceptor());
 					monitor.releaseRead();
 
-					receptor.getFout().writeObject(new MensajePreparadoServidorCliente("Servidor", receptor.getId(), msgCS.getEmisor(), msgCS.getPuerto(), msgCS.getIPEmisor()));
-					receptor.getFout().flush();
+					monitor.requestRead();
+					ObjectOutputStream canalReceptor =tablaCanales.get(receptor.getId());
+					monitor.releaseRead();
+
+					canalReceptor.writeObject(new MensajePreparadoServidorCliente("Servidor", receptor.getId(), msgCS.getEmisor(), msgCS.getPuerto(), msgCS.getIPEmisor()));
+					canalReceptor.flush();
 
 					break;
 
@@ -143,6 +158,17 @@ public class OyenteCliente extends Thread implements Serializable {
 					msgErr.mostrarInfo();
 
 					break;
+
+				case Mensaje.MSG_CONF_DOWN:
+					MensajeConfirmacionDescarga msgCD = (MensajeConfirmacionDescarga) mensaje;
+					msgCD.mostrarInfo();
+
+					monitor.requestWrite();
+					Usuario usrNew =msgCD.getUsuario();
+					tablaUsuarios.remove(msgCD.getOrigen());
+					tablaUsuarios.put(msgCD.getOrigen(),usrNew);
+					monitor.releaseWrite();
+
 
 				default: break;
 				}
