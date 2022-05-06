@@ -53,7 +53,8 @@ public class OyenteServidor extends Thread{
 				case Mensaje.MSG_FICH: //Mensaje de emitir fichero
 					MensajePedirFichero msgFich = (MensajePedirFichero) mensaje;
 					msgFich.mostrarInfo();
-					
+
+
 					ServerSocket ss = new ServerSocket(0);
 
 					fout.writeObject(new MensajePreparadoClienteServidor(usuario.getId(), "Servidor", msgFich.getReceptor(),

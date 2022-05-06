@@ -110,7 +110,7 @@ public class OyenteCliente extends Thread implements Serializable {
 						monitor.requestRead();
 						ObjectOutputStream canalEmisor =tablaCanales.get(usr2.getId());
 						monitor.releaseRead();
-						canalEmisor.writeObject(new MensajePedirFichero("Servidor", usr2.getId(), msgFich.getReceptor(), msgFich.getFichero()));
+						canalEmisor.writeObject(new MensajePedirFichero(msgFich.getOrigen(), usr2.getId(), msgFich.getReceptor(), msgFich.getFichero()));
 						canalEmisor.flush();
 
 					}
@@ -142,6 +142,10 @@ public class OyenteCliente extends Thread implements Serializable {
 					MensajeCerrarConexion msgCC = (MensajeCerrarConexion) mensaje;
 					msgCC.mostrarInfo();
 
+					monitor.releaseWrite();
+					tablaCanales.remove(msgCC.getOrigen());
+					monitor.releaseWrite();
+
 					monitor.requestWrite();
 					tablaUsuarios.remove(msgCC.getOrigen());
 					monitor.releaseWrite();
@@ -159,7 +163,7 @@ public class OyenteCliente extends Thread implements Serializable {
 
 					break;
 
-				case Mensaje.MSG_CONF_DOWN:
+				case Mensaje.MSG_CONF_DOWN://Mensaje de confirmacion de descarga de fichero
 					MensajeConfirmacionDescarga msgCD = (MensajeConfirmacionDescarga) mensaje;
 					msgCD.mostrarInfo();
 
