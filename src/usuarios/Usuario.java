@@ -34,7 +34,7 @@ public class Usuario implements Serializable{
 	public void setFin(ObjectInputStream fin) { this.fin = fin; }
 
 	public void actualizarLista() {
-		listaFich = new ArrayList<String>();
+		listaFich.clear();
 		for (File entry : (new File(rutaInfo)).listFiles()) listaFich.add(entry.getName());
 	}
 

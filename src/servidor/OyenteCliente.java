@@ -81,10 +81,14 @@ public class OyenteCliente extends Thread implements Serializable {
 						String u = it.next();
 
 						if (u != msgFich.getOrigen()) {
+							//todo reader lock
+							//Usuario usrAux = tablaUsuarios.get(u);
+							//usrAux.getSem().requestRead();
 							if (tablaUsuarios.get(u).getLista().contains(msgFich.getFichero())) {
 								usr2 = tablaUsuarios.get(u);
 								stop = true;
 							}
+							//releaseRead();
 						}
 					}
 					monitor.releaseRead();

@@ -1,5 +1,6 @@
 package clientes;
 
+import locks.LockBakery;
 import mensajes.*;
 import usuarios.Usuario;
 
@@ -12,14 +13,14 @@ import java.util.concurrent.Semaphore;
 public class OyenteServidor extends Thread{
 	private final Socket s;
 	private final Usuario usuario;
-	private ObjectOutputStream fout;
-	private Semaphore sMenu;
+	private final ObjectOutputStream fout;
+	private final LockBakery lock;
 
-	public OyenteServidor(Socket s, Usuario usuario, ObjectOutputStream fout, Semaphore sMenu){
+	public OyenteServidor(Socket s, Usuario usuario, ObjectOutputStream fout, LockBakery lock){
 		this.s = s;
 		this.usuario = usuario;
 		this.fout = fout;
-		this.sMenu = sMenu;
+		this.lock = lock;
 	}
 
 	@Override
@@ -38,7 +39,7 @@ public class OyenteServidor extends Thread{
 					MensajeConfirmacionConexion msgConfConex = (MensajeConfirmacionConexion) mensaje;
 					msgConfConex.mostrarInfo();
 
-					sMenu.release();
+					lock.releaseLock(Cliente.ID_OS);
 
 					break;
 
@@ -46,7 +47,7 @@ public class OyenteServidor extends Thread{
 					MensajeConfirmacionListaUsuarios msgCLU = (MensajeConfirmacionListaUsuarios) mensaje;
 					msgCLU.mostrarInfo();
 
-					sMenu.release();
+					lock.releaseLock(Cliente.ID_OS);
 
 					break;
 
@@ -67,8 +68,6 @@ public class OyenteServidor extends Thread{
 					ss.close();
 					sendSocket.close();
 
-					sMenu.release();
-
 					break;
 
 				case Mensaje.MSG_OK_SER_CLI: //Mensaje de preparado S->C
@@ -85,10 +84,13 @@ public class OyenteServidor extends Thread{
 
 					fileSocket.close();
 
-					sMenu.release();
-
-					//TODO semaforo/lock evitar acceso a lista durante actualizacion
+					//TODO semaforo/lock evitar acceso a lista durante actualizacion lock writer
 					usuario.actualizarLista();
+
+					System.out.println("Descarga completada, puede encontrar el fichero en su carpeta " +
+							"o ver su lista de ficheros desde el menu.");
+
+					lock.releaseLock(Cliente.ID_OS);
 
 					break;
 
@@ -97,16 +99,16 @@ public class OyenteServidor extends Thread{
 					msgCCC.mostrarInfo();
 
 					repeat = false;
-					
-					sMenu.release();
+
+					lock.releaseLock(Cliente.ID_OS);
 					
 					break;
 
 				case Mensaje.MSG_ERROR: //Mensaje de error
 					MensajeError msgErr = (MensajeError) mensaje;
 					msgErr.mostrarInfo();
-					
-					sMenu.release();
+
+					lock.releaseLock(Cliente.ID_OS);
 					
 					break;
 

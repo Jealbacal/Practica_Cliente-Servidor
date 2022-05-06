@@ -1,5 +1,6 @@
 package clientes;
 
+import locks.LockBakery;
 import mensajes.*;
 import usuarios.Usuario;
 
@@ -17,13 +18,20 @@ public class Cliente {
 	private static final int OP_LISTA_FICHEROS = 3;
 	private static final int OP_SALIR = 4;
 
+	protected static final int ID_CLI = 1;
+	protected static final int ID_OS = 2;
+
 	public static void main(String args[]) throws IOException, InterruptedException {
 
 		Usuario usuario = altaUsuario();
 
 		Socket s = new Socket(usuario.getDireccionIP(), PUERTO);
 
-		Semaphore sMenu = new Semaphore(0, true);
+		//Semaphore sMenu = new Semaphore(0, true);
+
+		LockBakery lock = new LockBakery(2);
+
+		lock.takeLock(ID_OS);
 
 		ObjectOutputStream fout = new ObjectOutputStream(s.getOutputStream());
 
@@ -32,16 +40,21 @@ public class Cliente {
 		fout.writeObject(msgConex);
 		fout.flush();
 
-		(new OyenteServidor(s, usuario, fout, sMenu)).start();
+		(new OyenteServidor(s, usuario, fout, lock)).start();
 
 		int op = 0;
 
 		while (op != OP_SALIR) {
-			sMenu.acquire();
+			//sMenu.acquire();
+			/// takelock (cliente)
 
+			lock.takeLock(ID_CLI);
 			op = menu();
+			lock.releaseLock(ID_CLI);
+			lock.takeLock(ID_OS);
 			//segun el menu manda mensajes al servidor
 
+			//release (oyente)
 			switch (op) {
 			case OP_LISTA_USUARIOS:
 				MensajeListaUsuarios msgLU = new MensajeListaUsuarios(usuario.getId(), "Servidor");
@@ -63,10 +76,13 @@ public class Cliente {
 				break;
 
 			case OP_LISTA_FICHEROS:
+				//todo reader lock
 				for (String fich : usuario.getLista())
 					System.out.println(fich);
 
-				sMenu.release();
+				//sMenu.release();
+
+				lock.releaseLock(ID_OS);
 
 				break;
 
@@ -74,7 +90,10 @@ public class Cliente {
 				fout.writeObject(new MensajeCerrarConexion(usuario.getId(), "Servidor"));
 				fout.flush();
 
-				sMenu.acquire();
+				//sMenu.acquire();
+
+				lock.takeLock(ID_CLI);
+				lock.releaseLock(ID_CLI);
 
 				break;
 
