@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Cliente {
 	private static final int PUERTO = 999;
@@ -21,20 +22,20 @@ public class Cliente {
 	protected static final int ID_CLI = 1;
 	protected static final int ID_OS = 2;
 
+	private static LockBakery lock = new LockBakery(2);
+
+	private static Semaphore readSem = new Semaphore(1, true);
+	private static Semaphore writeSem = new Semaphore(1, true);
+	private static AtomicInteger readCount = new AtomicInteger(0);;
+
 	public static void main(String args[]) throws IOException, InterruptedException {
 
 		Usuario usuario = altaUsuario();
 
-		Socket s = new Socket(usuario.getDireccionIP(), PUERTO);
-
-		//Semaphore sMenu = new Semaphore(0, true);
-
-		LockBakery lock = new LockBakery(2);
-
 		lock.takeLock(ID_OS);
 
+		Socket s = new Socket(usuario.getDireccionIP(), PUERTO);
 		ObjectOutputStream fout = new ObjectOutputStream(s.getOutputStream());
-
 		MensajeConexion msgConex = new MensajeConexion(usuario.getId(), "Servidor", usuario);
 
 		fout.writeObject(msgConex);
@@ -45,16 +46,13 @@ public class Cliente {
 		int op = 0;
 
 		while (op != OP_SALIR) {
-			//sMenu.acquire();
-			/// takelock (cliente)
-
+			// takelock (cliente)
 			lock.takeLock(ID_CLI);
 			op = menu();
 			lock.releaseLock(ID_CLI);
 			lock.takeLock(ID_OS);
 			//segun el menu manda mensajes al servidor
 
-			//release (oyente)
 			switch (op) {
 			case OP_LISTA_USUARIOS:
 				MensajeListaUsuarios msgLU = new MensajeListaUsuarios(usuario.getId(), "Servidor");
