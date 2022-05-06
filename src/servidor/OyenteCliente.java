@@ -32,8 +32,8 @@ public class OyenteCliente extends Thread implements Serializable {
 			ObjectOutputStream fout = new ObjectOutputStream(s.getOutputStream());
 
 			boolean repeat = true;
-			//TODO ARREGLAR ORIGEN/DESTINO DE MENSAJES
-			while(repeat){
+
+			while (repeat) {
 				Mensaje mensaje = (Mensaje) fin.readObject();
 
 				switch (mensaje.getTipo()) {
@@ -123,7 +123,7 @@ public class OyenteCliente extends Thread implements Serializable {
 
 					repeat = false;
 
-					fout.writeObject(new MensajeConfirmacionCerrarConexion("Servidor",msgCC.getOrigen()));
+					fout.writeObject(new MensajeConfirmacionCerrarConexion("Servidor", msgCC.getOrigen()));
 					fout.flush();
 
 					break;

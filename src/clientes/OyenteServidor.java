@@ -29,7 +29,7 @@ public class OyenteServidor extends Thread{
 			ObjectInputStream fin = new ObjectInputStream(s.getInputStream());
 			
 			boolean repeat = true;
-			//TODO ARREGLAR ORIGEN/DESTINO DE MENSAJES
+			
 			while (repeat) {
 				Mensaje mensaje = (Mensaje) fin.readObject();
 
@@ -54,7 +54,6 @@ public class OyenteServidor extends Thread{
 					MensajePedirFichero msgFich = (MensajePedirFichero) mensaje;
 					msgFich.mostrarInfo();
 					
-					//TODO lock para los puertos, que no tomen el mismo sin querer
 					ServerSocket ss = new ServerSocket(0);
 
 					fout.writeObject(new MensajePreparadoClienteServidor(usuario.getId(), "Servidor", msgFich.getReceptor(),

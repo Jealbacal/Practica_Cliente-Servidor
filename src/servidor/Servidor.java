@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class Servidor {
 
-    private static final int socket=999;
+    private static final int socket = 999;
     private static Map<String, Usuario> tablaUsuario = new HashMap<String, Usuario>();
     private static MonitorWR monitor;
     private static ServerSocket ss;

@@ -20,15 +20,15 @@ public class Cliente {
 	public static void main(String args[]) throws IOException, InterruptedException {
 
 		Usuario usuario = altaUsuario();
-		
+
 		Socket s = new Socket(usuario.getDireccionIP(), PUERTO);
 
 		Semaphore sMenu = new Semaphore(0, true);
-		
+
 		ObjectOutputStream fout = new ObjectOutputStream(s.getOutputStream());
-		
+
 		MensajeConexion msgConex = new MensajeConexion(usuario.getId(), "Servidor", usuario);
-		
+
 		fout.writeObject(msgConex);
 		fout.flush();
 
@@ -36,30 +36,30 @@ public class Cliente {
 
 		int op = 0;
 
-		while (op != 4) {
+		while (op != OP_SALIR) {
 			sMenu.acquire();
-			
+
 			op = menu();
 			//segun el menu manda mensajes al servidor
 
 			switch (op) {
 			case OP_LISTA_USUARIOS:
 				MensajeListaUsuarios msgLU = new MensajeListaUsuarios(usuario.getId(), "Servidor");
-				
+
 				fout.writeObject(msgLU);
 				fout.flush();
-				
+
 				break;
 
 			case OP_DESCARGAR_FICHERO:
 				System.out.println("¿Cual es el nombre del fichero?");
-				
+
 				BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 				String fichero = br.readLine();
-				
+
 				fout.writeObject(new MensajePedirFichero(usuario.getId(), "Servidor", usuario.getId(), fichero));
 				fout.flush();
-				
+
 				break;
 
 			case OP_LISTA_FICHEROS:
@@ -67,29 +67,33 @@ public class Cliente {
 					System.out.println(fich);
 
 				sMenu.release();
-				
+
 				break;
 
 			case OP_SALIR:
 				fout.writeObject(new MensajeCerrarConexion(usuario.getId(), "Servidor"));
 				fout.flush();
-				
+
 				sMenu.acquire();
-				
+
 				break;
 
 			default: break;
 			}
 		}
-		
+
 		s.close();
 	}
 
-	public static int menu() throws IOException {
+	/**
+	 * Muestra el menu del cliente y le permite escoger una opcion
+	 * @return La opcion escogida en formato int
+	 */
+	public static int menu() {
 		System.out.println("\n --------------------------------------");
 		System.out.println("|                MENU                  |");
 		System.out.println(" --------------------------------------");
-		
+
 		int op = -1;
 		while (op <= 0 || op > 4) {
 			System.out.println("  1- Consulta lista de usuarios");
@@ -99,13 +103,19 @@ public class Cliente {
 			System.out.println("Escoge una opcion:");
 
 			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-			
-			int eleccion = Integer.parseInt(br.readLine());
-			if (eleccion == 1) op = 1;
-			else if (eleccion == 2) op = 2;
-			else if (eleccion == 3) op = 3;
-			else if (eleccion == 4) op = 4;
-			else System.out.println("\nOpcion no valida, inserta un entero del 1 al 4:");
+
+			int eleccion;
+			try {
+				eleccion = Integer.parseInt(br.readLine());
+				if (eleccion == 1) op = 1;
+				else if (eleccion == 2) op = 2;
+				else if (eleccion == 3) op = 3;
+				else if (eleccion == 4) op = 4;
+				else System.out.println("\nOpcion no valida, inserta un entero del 1 al 4:");
+			} catch (NumberFormatException nfe) {
+				System.out.println("/nPor favor, introduzca un numero entero:");
+			} catch (IOException e) { e.printStackTrace(); }
+
 		}
 
 		return op;
