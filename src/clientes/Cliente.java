@@ -26,7 +26,7 @@ public class Cliente {
 
 	private static Semaphore readSem = new Semaphore(1, true);
 	private static Semaphore writeSem = new Semaphore(1, true);
-	private static AtomicInteger readCount = new AtomicInteger(0);;
+	private static AtomicInteger readCount = new AtomicInteger(0);
 
 	public static void main(String args[]) throws IOException, InterruptedException {
 
@@ -55,9 +55,7 @@ public class Cliente {
 
 			switch (op) {
 			case OP_LISTA_USUARIOS:
-				MensajeListaUsuarios msgLU = new MensajeListaUsuarios(usuario.getId(), "Servidor");
-
-				fout.writeObject(msgLU);
+				fout.writeObject(new MensajeListaUsuarios(usuario.getId(), "Servidor"));
 				fout.flush();
 
 				break;
@@ -74,12 +72,18 @@ public class Cliente {
 				break;
 
 			case OP_LISTA_FICHEROS:
-				//todo reader lock
-				for (String fich : usuario.getLista())
-					System.out.println(fich);
-
-				//sMenu.release();
-
+				//Aquire de lectura
+				readSem.acquire();
+				if (readCount.incrementAndGet() == 1) writeSem.acquire();
+				readSem.release();
+				//Lectura
+				for (String fich : usuario.getLista()) System.out.println(fich);
+				//Release de lectura
+				readSem.acquire();
+				if (readCount.decrementAndGet() == 0) writeSem.release();
+				readSem.release();
+				
+				//Release del lock de OyenteServidor
 				lock.releaseLock(ID_OS);
 
 				break;
@@ -87,8 +91,6 @@ public class Cliente {
 			case OP_SALIR:
 				fout.writeObject(new MensajeCerrarConexion(usuario.getId(), "Servidor"));
 				fout.flush();
-
-				//sMenu.acquire();
 
 				lock.takeLock(ID_CLI);
 				lock.releaseLock(ID_CLI);
@@ -130,7 +132,7 @@ public class Cliente {
 				else if (eleccion == 4) op = 4;
 				else System.out.println("\nOpcion no valida, inserta un entero del 1 al 4:");
 			} catch (NumberFormatException nfe) {
-				System.out.println("/nPor favor, introduzca un numero entero:");
+				System.out.println("\nPor favor, introduzca un numero entero:");
 			} catch (IOException e) { e.printStackTrace(); }
 
 		}
@@ -150,6 +152,6 @@ public class Cliente {
 		System.out.println("\n¿Cual es tu direccionIP?");
 		String direcIP = clientID.readLine();
 
-		return new Usuario(nombre, direcIP, ruta);
+		return new Usuario(nombre, direcIP, ruta, readSem, writeSem, readCount);
 	}
 }

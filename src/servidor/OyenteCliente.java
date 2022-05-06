@@ -81,14 +81,20 @@ public class OyenteCliente extends Thread implements Serializable {
 						String u = it.next();
 
 						if (u != msgFich.getOrigen()) {
-							//todo reader lock
-							//Usuario usrAux = tablaUsuarios.get(u);
-							//usrAux.getSem().requestRead();
-							if (tablaUsuarios.get(u).getLista().contains(msgFich.getFichero())) {
-								usr2 = tablaUsuarios.get(u);
+							Usuario usrAux = tablaUsuarios.get(u);
+							//Acquire de lectura
+							usrAux.getReadSem().acquire();
+							if (usrAux.getReadCount().incrementAndGet() == 1) usrAux.getWriteSem().acquire();
+							usrAux.getReadSem().release();
+							//Lectura
+							if (usrAux.getLista().contains(msgFich.getFichero())) {
+								usr2 = usrAux;
 								stop = true;
 							}
-							//releaseRead();
+							//Release de lectura
+							usrAux.getReadSem().acquire();
+							if (usrAux.getReadCount().decrementAndGet() == 0) usrAux.getWriteSem().release();
+							usrAux.getReadSem().release();
 						}
 					}
 					monitor.releaseRead();

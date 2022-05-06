@@ -83,8 +83,12 @@ public class OyenteServidor extends Thread{
 
 					fileSocket.close();
 
-					//TODO semaforo/lock evitar acceso a lista durante actualizacion lock writer
+					//Acquire de escritura
+					usuario.getWriteSem().acquire();
+					//Escritura
 					usuario.actualizarLista();
+					//Release de escritura
+					usuario.getWriteSem().release();
 
 					System.out.println("Descarga completada, puede encontrar el fichero en su carpeta " +
 							"o ver su lista de ficheros desde el menu.");
@@ -114,6 +118,6 @@ public class OyenteServidor extends Thread{
 				default: break;
 				}
 			}
-		} catch (IOException | ClassNotFoundException e) { e.printStackTrace(); }
+		} catch (IOException | ClassNotFoundException | InterruptedException e) { e.printStackTrace(); }
 	}
 }

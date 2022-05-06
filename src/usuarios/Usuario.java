@@ -5,6 +5,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @SuppressWarnings("serial")
 public class Usuario implements Serializable{
@@ -12,31 +14,32 @@ public class Usuario implements Serializable{
 	private final String ID;
 	private final String dirIP;
 	private final String rutaInfo;
+	private final Semaphore readSem;
+	private final Semaphore writeSem;
+	private final AtomicInteger readCount;
 	private ArrayList<String> listaFich;
 	private ObjectOutputStream fout;
 	private ObjectInputStream fin;
 
-	public Usuario(String ID, String dirIP, String rutaInfo) {
+	public Usuario(String ID, String dirIP, String rutaInfo, Semaphore readSem, Semaphore writeSem, AtomicInteger readCount) {
 		this.ID = ID;
 		this.dirIP = dirIP;
 		this.rutaInfo = rutaInfo;
+		this.readSem = readSem;
+		this.writeSem = writeSem;
+		this.readCount = readCount;
 		
 		listaFich = new ArrayList<String>();
 		for (File entry : (new File(rutaInfo)).listFiles()) listaFich.add(entry.getName());
 	}
 
+	public void setFout(ObjectOutputStream fout) { this.fout = fout; }
+	
+	public void setFin(ObjectInputStream fin) { this.fin = fin; }
+	
 	public ObjectOutputStream getFout() { return fout; }
 
-	public void setFout(ObjectOutputStream fout) { this.fout = fout; }
-
 	public ObjectInputStream getFin() { return fin; }
-
-	public void setFin(ObjectInputStream fin) { this.fin = fin; }
-
-	public void actualizarLista() {
-		listaFich.clear();
-		for (File entry : (new File(rutaInfo)).listFiles()) listaFich.add(entry.getName());
-	}
 
 	public String getId() { return ID; }
 
@@ -45,6 +48,18 @@ public class Usuario implements Serializable{
 	public String getRuta() { return rutaInfo; }
 	
 	public ArrayList<String> getLista() { return listaFich; }
+	
+	public Semaphore getReadSem() { return readSem; }
+
+	
+	public Semaphore getWriteSem() { return writeSem; }
+	
+	public AtomicInteger getReadCount() { return readCount; }
+	
+	public void actualizarLista() {
+		listaFich.clear();
+		for (File entry : (new File(rutaInfo)).listFiles()) listaFich.add(entry.getName());
+	}
 	
 	public String toString() { 
 		return "Usuario " + ID + " con IP " + dirIP + " y datos almacenados en " + rutaInfo;
