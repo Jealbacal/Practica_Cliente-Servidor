@@ -47,7 +47,7 @@ public class OyenteCliente extends Thread implements Serializable {
 
 
 
-					monitor.releaseWrite();
+					monitor.requestWrite();
 					tablaCanales.put(usr.getId(),fout);
 					monitor.releaseWrite();
 
@@ -142,7 +142,7 @@ public class OyenteCliente extends Thread implements Serializable {
 					MensajeCerrarConexion msgCC = (MensajeCerrarConexion) mensaje;
 					msgCC.mostrarInfo();
 
-					monitor.releaseWrite();
+					monitor.requestWrite();
 					tablaCanales.remove(msgCC.getOrigen());
 					monitor.releaseWrite();
 
